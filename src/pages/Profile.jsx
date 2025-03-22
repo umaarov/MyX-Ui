@@ -64,7 +64,7 @@ const Profile = () => {
                         />
                     ) : (
                         <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center">
-                            <span className="text-gray-600 text-2xl">{user.name.charAt(0)}</span>
+                            <span className="text-gray-600 text-2xl">{user.name}</span>
                         </div>
                     )}
 

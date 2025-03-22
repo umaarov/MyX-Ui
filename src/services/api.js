@@ -11,7 +11,6 @@ const api = axios.create({
     }
 });
 
-// Add request interceptor to include token in requests
 api.interceptors.request.use(
     (config) => {
         const token = Cookies.get('auth_token');
@@ -23,7 +22,6 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-// Auth services
 export const register = async (userData) => {
     const formData = new FormData();
     formData.append('name', userData.name);
@@ -53,7 +51,6 @@ export const fetchCurrentUser = async () => {
     return response.data;
 };
 
-// Post services
 export const fetchPosts = async () => {
     const response = await api.get('/posts');
     return response.data;
@@ -112,7 +109,6 @@ export const fetchLikedPosts = async () => {
     return response.data;
 };
 
-// Comment services
 export const fetchComments = async (postId) => {
     const response = await api.get(`/posts/${postId}/comments`);
     return response.data;
@@ -128,7 +124,6 @@ export const deleteComment = async (id) => {
     return response.data;
 };
 
-// Like services
 export const togglePostLike = async (postId) => {
     const response = await api.post(`/posts/${postId}/like`);
     return response.data;
