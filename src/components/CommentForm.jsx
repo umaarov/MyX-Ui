@@ -18,6 +18,11 @@ const CommentForm = ({postId, onAddComment}) => {
                 post_id: postId,
                 content,
             });
+
+            if (!newComment || !newComment.id) {
+                throw new Error("Invalid response from server");
+            }
+
             onAddComment(newComment);
             setContent('');
         } catch (err) {
@@ -27,6 +32,7 @@ const CommentForm = ({postId, onAddComment}) => {
             setLoading(false);
         }
     };
+
 
     return (
         <form onSubmit={handleSubmit} className="mb-4">

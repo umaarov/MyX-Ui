@@ -35,8 +35,10 @@ const Post = ({post, onDelete, onUpdate}) => {
     };
 
     const handleAddComment = (newComment) => {
-        setComments([newComment, ...comments]);
+        if (!newComment || !newComment.id) return;
+        setComments((prevComments) => [newComment, ...prevComments]);
     };
+
 
     const handleDeleteComment = (commentId) => {
         setComments(comments.filter(comment => comment.id !== commentId));
@@ -85,7 +87,7 @@ const Post = ({post, onDelete, onUpdate}) => {
                         className="flex items-center space-x-1 text-gray-500"
                     >
                         <span>Comments</span>
-                        <span>({post.comments_count})</span>
+                        <span>({comments.length})</span>
                     </button>
                 </div>
 
