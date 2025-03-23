@@ -79,18 +79,18 @@ export const createPost = async (postData) => {
 
 export const updatePost = async (id, postData) => {
     const formData = new FormData();
-    formData.append('content', postData.content);
-    formData.append('_method', 'PUT');
+    formData.append("content", postData.content);
 
-    if (postData.photo) {
-        formData.append('photo', postData.photo);
+    if (postData.photo instanceof File) {
+        formData.append("photo", postData.photo);
     }
 
+    formData.append("_method", "PUT");
+
     const response = await api.post(`/posts/${id}`, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
+        headers: {"Content-Type": "multipart/form-data"},
     });
+
     return response.data;
 };
 

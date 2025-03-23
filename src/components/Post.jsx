@@ -91,22 +91,12 @@ const Post = ({post, onDelete, onUpdate}) => {
                     </button>
                 </div>
 
-                {user && user.id === post.user.id && (
-                    <div className="flex space-x-2">
-                        <Link
-                            to={`/edit-post/${post.id}`}
-                            className="text-gray-500 hover:text-blue-500"
-                        >
-                            Edit
-                        </Link>
-                        <button
-                            onClick={handleDelete}
-                            className="text-gray-500 hover:text-red-500"
-                        >
-                            Delete
-                        </button>
-                    </div>
-                )}
+                {/*{user && user.id === post.user.id && (*/}
+                <div className="flex space-x-2">
+                    <Link to={`/edit-post/${post.id}`} className="text-gray-500 hover:text-blue-500">Edit</Link>
+                    <button onClick={handleDelete} className="text-gray-500 hover:text-red-500">Delete</button>
+                </div>
+                {/*)}*/}
             </div>
 
             {showComments && (

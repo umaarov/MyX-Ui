@@ -26,11 +26,11 @@ const PostForm = ({postId = null, onSubmitSuccess}) => {
             const post = await fetchPost(id);
             setFormData({
                 content: post.content,
-                photo: null, // You can't pre-load the file input, but you can show a preview
+                photo: post.photo || null,
             });
             setPhotoPreview(post.photo);
         } catch (err) {
-            setError('Failed to load post');
+            setError("Failed to load post");
             console.error(err);
         } finally {
             setLoading(false);
@@ -56,10 +56,14 @@ const PostForm = ({postId = null, onSubmitSuccess}) => {
 
         try {
             if (isEdit) {
-                await updatePost(postId, formData);
+                await updatePost(postId, {
+                    ...formData,
+                    photo: formData.photo || undefined,
+                });
             } else {
                 await createPost(formData);
             }
+
 
             if (onSubmitSuccess) {
                 onSubmitSuccess();
@@ -67,7 +71,6 @@ const PostForm = ({postId = null, onSubmitSuccess}) => {
                 navigate('/');
             }
 
-            // Reset form after submission
             setFormData({
                 content: '',
                 photo: null
@@ -145,7 +148,7 @@ const PostForm = ({postId = null, onSubmitSuccess}) => {
                     <button
                         type="submit"
                         className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 disabled:bg-blue-300"
-                        disabled={loading || !formData.content.trim()}
+                        disabled={loading || !formData.content}
                     >
                         {loading ? 'Saving...' : isEdit ? 'Update' : 'Post'}
                     </button>
