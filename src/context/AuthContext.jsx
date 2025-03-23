@@ -1,4 +1,4 @@
-import {createContext, useContext, useEffect, useState} from 'react';
+import {createContext, useContext, useEffect, useRef, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import Cookies from 'js-cookie';
 import * as api from '../services/api';
@@ -10,27 +10,50 @@ export const AuthProvider = ({children}) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const token = Cookies.get('auth_token');
-        if (token) {
-            fetchUser();
-        } else {
-            setLoading(false);
-        }
-    }, []);
+    const hasFetchedUser = useRef(false);
 
     const fetchUser = async () => {
         try {
+            const token = Cookies.get('auth_token');
+            if (!token) {
+                console.log('No auth token found, skipping fetch.');
+                setLoading(false);
+                return;
+            }
+
+            console.log('Fetching user with token:', token);
             const userData = await api.fetchCurrentUser();
-            setUser(userData);
+            console.log('Fetched user:', userData);
+
+            if (userData && userData.data) {
+                setUser(userData.data);
+            } else {
+                console.error('Invalid user data received:', userData);
+                setUser(null);
+                Cookies.remove('auth_token');
+                navigate('/login');
+            }
         } catch (err) {
             console.error('Failed to fetch user:', err);
             Cookies.remove('auth_token');
+            setUser(null);
+            navigate('/login');
         } finally {
             setLoading(false);
         }
     };
+
+
+    useEffect(() => {
+        const token = Cookies.get('auth_token');
+        console.log('Auth Token:', token);
+        if (token && !hasFetchedUser.current) {
+            hasFetchedUser.current = true;
+            fetchUser();
+        } else {
+            setLoading(false);
+        }
+    },);
 
     const login = async (credentials) => {
         try {
@@ -59,6 +82,9 @@ export const AuthProvider = ({children}) => {
             throw err;
         }
     };
+    const refreshUser = async () => {
+        await fetchUser();
+    };
 
     const logout = () => {
         Cookies.remove('auth_token');
@@ -74,6 +100,7 @@ export const AuthProvider = ({children}) => {
         login,
         register,
         logout,
+        refreshUser,
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

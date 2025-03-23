@@ -7,11 +7,19 @@ import CommentForm from './CommentForm';
 
 const Post = ({post, onDelete, onUpdate}) => {
     const {user} = useAuth();
-    const [isLiked, setIsLiked] = useState(post.is_liked);
-    const [likesCount, setLikesCount] = useState(post.likes_count);
+    const [isLiked, setIsLiked] = useState(post?.is_liked || false);
+    const [likesCount, setLikesCount] = useState(post?.likes_count || 0);
     const [showComments, setShowComments] = useState(false);
-    const [comments, setComments] = useState(post.comments || []);
+    const [comments, setComments] = useState(post?.comments || []);
 
+    if (!post) {
+        return <div className="bg-white rounded-lg shadow-md p-4 mb-4">Post data unavailable</div>;
+    }
+
+    const postUser = post.user || {};
+    const postUserName = postUser.name || 'Unknown User';
+    const postUserUsername = postUser.username || 'unknown';
+    const formattedDate = post.created_at ? new Date(post.created_at).toLocaleString() : '';
 
     const handleLike = async () => {
         try {
@@ -27,7 +35,9 @@ const Post = ({post, onDelete, onUpdate}) => {
         if (window.confirm('Are you sure you want to delete this post?')) {
             try {
                 await deletePost(post.id);
-                onDelete(post.id);
+                if (typeof onDelete === 'function') {
+                    onDelete(post.id);
+                }
             } catch (error) {
                 console.error('Error deleting post:', error);
             }
@@ -39,30 +49,31 @@ const Post = ({post, onDelete, onUpdate}) => {
         setComments((prevComments) => [newComment, ...prevComments]);
     };
 
-
     const handleDeleteComment = (commentId) => {
         setComments(comments.filter(comment => comment.id !== commentId));
     };
 
-    const formattedDate = new Date(post.created_at).toLocaleString();
+    const isOwnPost = user && user.id && postUser.id && user.id === postUser.id;
+
+    const userInitial = postUserName.length > 0 ? postUserName.charAt(0) : '?';
 
     return (
         <div className="bg-white rounded-lg shadow-md p-4 mb-4">
             <div className="flex items-center mb-3">
-                {post.user.profile_photo ? (
+                {postUser.profile_photo ? (
                     <img
-                        src={post.user.profile_photo}
-                        alt={post.user.name}
+                        src={postUser.profile_photo}
+                        alt={postUserName}
                         className="w-10 h-10 rounded-full mr-3"
                     />
                 ) : (
                     <div className="w-10 h-10 rounded-full bg-gray-300 mr-3 flex items-center justify-center">
-                        <span className="text-gray-600">{post.user.name.charAt(0)}</span>
+                        <span className="text-gray-600">{userInitial}</span>
                     </div>
                 )}
                 <div>
-                    <p className="font-semibold">{post.user.name}</p>
-                    <p className="text-xs text-gray-500">@{post.user.username} • {formattedDate}</p>
+                    <p className="font-semibold">{postUserName}</p>
+                    <p className="text-xs text-gray-500">@{postUserUsername} • {formattedDate}</p>
                 </div>
             </div>
 
@@ -91,7 +102,7 @@ const Post = ({post, onDelete, onUpdate}) => {
                     </button>
                 </div>
 
-                {user && user.id === post.user.id && (
+                {isOwnPost && (
                     <div className="flex space-x-2">
                         <Link
                             to={`/edit-post/${post.id}`}

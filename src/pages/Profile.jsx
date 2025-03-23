@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {fetchLikedPosts, fetchUserPosts} from '../services/api';
 import Post from '../components/Post';
 import {useAuth} from '../context/AuthContext';
+import PostForm from '../components/PostForm';
 
 const Profile = () => {
     const [activeTab, setActiveTab] = useState('posts');
@@ -48,31 +49,43 @@ const Profile = () => {
         setPosts(posts.filter(post => post.id !== postId));
     };
 
-    if (!user) {
-        return <div className="text-center py-8">Please login to view profile</div>;
-    }
+    const handleSubmitSuccess = () => {
+        loadUserPosts();
+    };
+
+    const userName = user?.name || '';
+    const userInitial = userName.length > 0 ? userName.charAt(0).toUpperCase() : '';
+    const userUsername = user?.username || '';
+    const userCreatedAt = user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'Unknown date';
 
     return (
         <div className="max-w-2xl mx-auto p-4">
-            <div className="bg-white p-4 rounded-lg shadow mb-6">
-                <div className="flex items-center space-x-4">
-                    {user.profile_photo ? (
+            <div className="bg-white p-6 rounded-lg shadow mb-6">
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+                    {user?.profile_photo ? (
                         <img
                             src={user.profile_photo}
-                            alt={user.name}
-                            className="w-20 h-20 rounded-full"
+                            alt={userName}
+                            className="w-24 h-24 rounded-full object-cover"
                         />
                     ) : (
-                        <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center">
-                            <span className="text-gray-600 text-2xl">{user.name}</span>
+                        <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center">
+                            <span className="text-gray-600 text-3xl">{userInitial}</span>
                         </div>
                     )}
 
-                    <div>
-                        <h1 className="text-2xl font-bold">{user.name}</h1>
-                        <p className="text-gray-600">@{user.username}</p>
+                    <div className="text-center md:text-left">
+                        <h1 className="text-2xl font-bold">{userName}</h1>
+                        <p className="text-gray-600 mb-2">@{userUsername}</p>
+                        <p className="text-gray-700">
+                            Member since {userCreatedAt}
+                        </p>
                     </div>
                 </div>
+            </div>
+
+            <div className="mb-6">
+                <PostForm onSubmitSuccess={handleSubmitSuccess}/>
             </div>
 
             <div className="mb-4 border-b">

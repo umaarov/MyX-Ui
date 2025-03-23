@@ -1,95 +1,98 @@
 import {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
 import {createPost, fetchPost, updatePost} from '../services/api';
 
-const PostForm = ({postId = null, onSubmitSuccess}) => {
-    const [formData, setFormData] = useState({
-        content: '',
-        photo: null,
-    });
-    const [photoPreview, setPhotoPreview] = useState(null);
+const PostForm = ({postId, onSubmitSuccess}) => {
+    const [content, setContent] = useState('');
+    const [photo, setPhoto] = useState(null);
+    const [photoPreview, setPhotoPreview] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [isEdit, setIsEdit] = useState(false);
-    const navigate = useNavigate();
+    const [isEditing, setIsEditing] = useState(false);
+    const [loadingPost, setLoadingPost] = useState(false);
 
     useEffect(() => {
         if (postId) {
-            setIsEdit(true);
+            setIsEditing(true);
             loadPost(postId);
         }
     }, [postId]);
 
     const loadPost = async (id) => {
         try {
-            setLoading(true);
-            const post = await fetchPost(id);
-            setFormData({
-                content: post.content,
-                photo: null, // You can't pre-load the file input, but you can show a preview
-            });
-            setPhotoPreview(post.photo);
+            setLoadingPost(true);
+            const response = await fetchPost(id);
+            const post = response.data;
+            setContent(post.content || '');
+            if (post.photo) {
+                setPhotoPreview(post.photo);
+            }
         } catch (err) {
-            setError('Failed to load post');
+            setError('Failed to load post data');
             console.error(err);
         } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleChange = (e) => {
-        const {name, value, files} = e.target;
-        if (name === 'photo' && files && files[0]) {
-            setFormData({...formData, photo: files[0]});
-            setPhotoPreview(URL.createObjectURL(files[0]));
-        } else {
-            setFormData({...formData, [name]: value});
+            setLoadingPost(false);
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!formData.content.trim()) return;
-
-        setLoading(true);
-        setError(null);
+        if (!content.trim()) {
+            setError('Content is required');
+            return;
+        }
 
         try {
-            if (isEdit) {
-                await updatePost(postId, formData);
+            setLoading(true);
+            setError(null);
+
+            const postData = {
+                content,
+                photo
+            };
+
+            let response;
+            if (isEditing) {
+                response = await updatePost(postId, postData);
             } else {
-                await createPost(formData);
+                response = await createPost(postData);
             }
 
-            if (onSubmitSuccess) {
-                onSubmitSuccess();
-            } else {
-                navigate('/');
-            }
+            setContent('');
+            setPhoto(null);
+            setPhotoPreview('');
 
-            // Reset form after submission
-            setFormData({
-                content: '',
-                photo: null
-            });
-            setPhotoPreview(null);
+            if (typeof onSubmitSuccess === 'function') {
+                onSubmitSuccess(response.data);
+            }
         } catch (err) {
-            setError('Failed to save post');
+            setError(err.response?.data?.message || 'Failed to submit post');
             console.error(err);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleRemovePhoto = () => {
-        setFormData({...formData, photo: null});
-        setPhotoPreview(null);
+    const handlePhotoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setPhoto(file);
+            setPhotoPreview(URL.createObjectURL(file));
+        }
     };
 
+    const handleRemovePhoto = () => {
+        setPhoto(null);
+        setPhotoPreview('');
+    };
+
+    if (loadingPost) {
+        return <div className="text-center py-4">Loading post data...</div>;
+    }
+
     return (
-        <div className="bg-white p-4 rounded-lg shadow mb-4">
+        <div className="bg-white rounded-lg shadow-md p-4">
             <h2 className="text-xl font-semibold mb-4">
-                {isEdit ? 'Edit Post' : 'Create Post'}
+                {isEditing ? 'Edit Post' : 'Create a New Post'}
             </h2>
 
             {error && (
@@ -100,15 +103,14 @@ const PostForm = ({postId = null, onSubmitSuccess}) => {
 
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-          <textarea
-              name="content"
-              value={formData.content}
-              onChange={handleChange}
-              placeholder="What's on your mind?"
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-              rows="3"
-              required
-          />
+                    <textarea
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        rows="4"
+                        placeholder="What's on your mind?"
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        required
+                    />
                 </div>
 
                 {photoPreview && (
@@ -116,38 +118,41 @@ const PostForm = ({postId = null, onSubmitSuccess}) => {
                         <img
                             src={photoPreview}
                             alt="Preview"
-                            className="w-full max-h-80 object-contain rounded-md"
+                            className="w-full h-auto rounded-lg"
                         />
                         <button
                             type="button"
                             onClick={handleRemovePhoto}
-                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
                         >
-                            ×
+                            Remove
                         </button>
                     </div>
                 )}
 
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                        <label className="cursor-pointer bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded-md mr-2">
-                            <input
-                                type="file"
-                                name="photo"
-                                onChange={handleChange}
-                                className="hidden"
-                                accept="image/*"
-                            />
+                <div className="flex justify-between">
+                    <div>
+                        <input
+                            type="file"
+                            id="photo"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handlePhotoChange}
+                        />
+                        <label
+                            htmlFor="photo"
+                            className="inline-block bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg cursor-pointer"
+                        >
                             Add Photo
                         </label>
                     </div>
 
                     <button
                         type="submit"
-                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 disabled:bg-blue-300"
-                        disabled={loading || !formData.content.trim()}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
+                        disabled={loading}
                     >
-                        {loading ? 'Saving...' : isEdit ? 'Update' : 'Post'}
+                        {loading ? 'Processing...' : isEditing ? 'Update Post' : 'Post'}
                     </button>
                 </div>
             </form>

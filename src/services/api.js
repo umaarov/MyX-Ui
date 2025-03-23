@@ -22,6 +22,24 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+api.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        if (error.response && error.response.status === 401) {
+            console.warn('Unauthorized request, checking if token is expired...');
+            const token = Cookies.get('auth_token');
+            if (token) {
+                Cookies.remove('auth_token');
+                localStorage.removeItem('auth_user');
+            }
+            if (window.location.pathname !== '/login') {
+                window.location.href = '/login';
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 export const register = async (userData) => {
     const formData = new FormData();
     formData.append('name', userData.name);
@@ -80,7 +98,7 @@ export const createPost = async (postData) => {
 export const updatePost = async (id, postData) => {
     const formData = new FormData();
     formData.append('content', postData.content);
-    formData.append('_method', 'PUT');
+    formData.append('_method', 'PUT');  // For Laravel's form method spoofing
 
     if (postData.photo) {
         formData.append('photo', postData.photo);
