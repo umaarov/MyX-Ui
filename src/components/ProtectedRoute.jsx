@@ -31,7 +31,7 @@ const ProtectedRoute = ({children}) => {
                     <div className="spinner-border text-primary" role="status">
                         <span className="sr-only">Loading...</span>
                     </div>
-                    <p className="mt-2">Verifying authentication...</p>
+                    <p className="mt-2">Loading...</p>
                 </div>
             </div>
         );
