@@ -49,8 +49,8 @@ const Comment = ({comment, onDeleteComment}) => {
     const formattedDate = new Date(comment.created_at).toLocaleString();
 
     return (
-        <div className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md
-                       transition-all duration-200 border border-gray-100">
+        <div className="p-4 bg-white rounded-lg hover:shadow-md
+                       transition-all duration-200 border border-gray-200">
             <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                     {comment.user.profile_photo ? (
