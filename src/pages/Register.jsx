@@ -36,18 +36,18 @@ const Register = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded-md shadow-md">
-            <h2 className="text-2xl font-bold mb-4">Create Account</h2>
+        <div className="max-w-md mx-auto mt-12 p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Create Account</h2>
 
             {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6 animate-fade-in">
                     {error}
                 </div>
             )}
 
             <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label className="block text-gray-700 mb-2" htmlFor="name">
+                <div className="mb-5">
+                    <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
                         Name
                     </label>
                     <input
@@ -56,7 +56,10 @@ const Register = () => {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-md"
+                        className="w-full px-4 py-2.5 bg-gray-100 rounded-lg text-gray-800
+                                 border border-gray-200 focus:outline-none focus:ring-2
+                                 focus:ring-green-500 focus:border-transparent
+                                 transition-all duration-200"
                         required
                     />
                     {errors.name && (
@@ -64,8 +67,8 @@ const Register = () => {
                     )}
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-700 mb-2" htmlFor="username">
+                <div className="mb-5">
+                    <label htmlFor="username" className="block text-gray-700 font-medium mb-2">
                         Username
                     </label>
                     <input
@@ -74,7 +77,10 @@ const Register = () => {
                         name="username"
                         value={formData.username}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-md"
+                        className="w-full px-4 py-2.5 bg-gray-100 rounded-lg text-gray-800
+                                 border border-gray-200 focus:outline-none focus:ring-2
+                                 focus:ring-green-500 focus:border-transparent
+                                 transition-all duration-200"
                         required
                     />
                     {errors.username && (
@@ -82,8 +88,8 @@ const Register = () => {
                     )}
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-700 mb-2" htmlFor="password">
+                <div className="mb-5">
+                    <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
                         Password
                     </label>
                     <input
@@ -92,7 +98,10 @@ const Register = () => {
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-md"
+                        className="w-full px-4 py-2.5 bg-gray-100 rounded-lg text-gray-800
+                                 border border-gray-200 focus:outline-none focus:ring-2
+                                 focus:ring-green-500 focus:border-transparent
+                                 transition-all duration-200"
                         required
                     />
                     {errors.password && (
@@ -100,8 +109,8 @@ const Register = () => {
                     )}
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-700 mb-2" htmlFor="password_confirmation">
+                <div className="mb-5">
+                    <label htmlFor="password_confirmation" className="block text-gray-700 font-medium mb-2">
                         Confirm Password
                     </label>
                     <input
@@ -110,13 +119,16 @@ const Register = () => {
                         name="password_confirmation"
                         value={formData.password_confirmation}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-md"
+                        className="w-full px-4 py-2.5 bg-gray-100 rounded-lg text-gray-800
+                                 border border-gray-200 focus:outline-none focus:ring-2
+                                 focus:ring-green-500 focus:border-transparent
+                                 transition-all duration-200"
                         required
                     />
                 </div>
 
                 <div className="mb-6">
-                    <label className="block text-gray-700 mb-2" htmlFor="profile_photo">
+                    <label htmlFor="profile_photo" className="block text-gray-700 font-medium mb-2">
                         Profile Photo (Optional)
                     </label>
                     <input
@@ -124,7 +136,10 @@ const Register = () => {
                         id="profile_photo"
                         name="profile_photo"
                         onChange={handleChange}
-                        className="w-full"
+                        className="w-full text-gray-700 file:mr-4 file:py-2 file:px-4
+                                 file:rounded-lg file:border-0 file:text-sm file:font-medium
+                                 file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200
+                                 transition-colors duration-200"
                         accept="image/*"
                     />
                     {errors.profile_photo && (
@@ -135,11 +150,16 @@ const Register = () => {
                 <div className="flex items-center justify-between">
                     <button
                         type="submit"
-                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+                        className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-lg
+                                 font-medium transition-all duration-200 focus:outline-none
+                                 focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                     >
                         Register
                     </button>
-                    <Link to="/login" className="text-blue-500 hover:underline">
+                    <Link
+                        to="/login"
+                        className="text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                    >
                         Already have an account? Login
                     </Link>
                 </div>

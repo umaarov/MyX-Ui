@@ -4,11 +4,11 @@ import {deleteComment, toggleCommentLike} from '../services/api';
 
 const CommentList = ({comments, onDeleteComment}) => {
     if (!comments || comments.length === 0) {
-        return <p className="text-gray-500 my-2">No comments yet</p>;
+        return <p className="text-gray-500 text-sm my-4">No comments yet</p>;
     }
 
     return (
-        <div className="space-y-3 mt-3">
+        <div className="space-y-4 mt-4">
             {comments.map((comment) => (
                 <Comment
                     key={comment.id}
@@ -49,45 +49,69 @@ const Comment = ({comment, onDeleteComment}) => {
     const formattedDate = new Date(comment.created_at).toLocaleString();
 
     return (
-        <div className="p-3 bg-gray-50 rounded">
-            <div className="flex justify-between">
-                <div className="flex items-center">
+        <div className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md
+                       transition-all duration-200 border border-gray-100">
+            <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
                     {comment.user.profile_photo ? (
                         <img
                             src={comment.user.profile_photo}
                             alt={comment.user.name}
-                            className="w-8 h-8 rounded-full mr-2"
+                            className="w-10 h-10 rounded-full object-cover"
                         />
                     ) : (
-                        <div className="w-8 h-8 rounded-full bg-gray-300 mr-2 flex items-center justify-center">
-                            <span className="text-gray-600">{comment.user.name.charAt(0)}</span>
+                        <div className="w-10 h-10 rounded-full bg-gray-200 flex
+                                      items-center justify-center text-gray-600
+                                      font-medium">
+                            {comment.user.name.charAt(0)}
                         </div>
                     )}
                     <div>
-                        <p className="font-medium text-sm">{comment.user.name}</p>
-                        <p className="text-xs text-gray-500">@{comment.user.username} • {formattedDate}</p>
+                        <p className="font-semibold text-gray-800">
+                            {comment.user.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                            @{comment.user.username} • {formattedDate}
+                        </p>
                     </div>
                 </div>
 
                 {user && user.id === comment.user.id && (
                     <button
                         onClick={handleDelete}
-                        className="text-xs text-gray-500 hover:text-red-500"
+                        className="text-sm text-gray-500 hover:text-red-500
+                                 transition-colors duration-200"
                     >
                         Delete
                     </button>
                 )}
             </div>
 
-            <p className="mt-2">{comment.content}</p>
+            <p className="mt-3 text-gray-700 leading-relaxed">
+                {comment.content}
+            </p>
 
-            <div className="mt-2">
+            <div className="mt-3">
                 <button
                     onClick={handleLike}
-                    className={`text-xs flex items-center space-x-1 ${isLiked ? 'text-blue-500' : 'text-gray-500'}`}
+                    className={`text-sm flex items-center gap-1.5 
+                              ${isLiked ? 'text-blue-500' : 'text-gray-500'} 
+                              hover:text-blue-600 transition-colors duration-200`}
                 >
-                    <span>Like</span>
-                    <span>({likesCount})</span>
+                    <svg
+                        className="w-4 h-4"
+                        fill={isLiked ? 'currentColor' : 'none'}
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                        />
+                    </svg>
+                    <span>{likesCount}</span>
                 </button>
             </div>
         </div>

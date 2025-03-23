@@ -13,23 +13,29 @@ function App() {
     return (
         <Router>
             <AuthProvider>
-                <div className="min-h-screen bg-gray-100">
+                <div className="min-h-screen bg-gray-50">
                     <Navbar/>
-                    <main className="py-4">
+                    <main className="py-6">
                         <Routes>
                             <Route path="/" element={<Home/>}/>
                             <Route path="/login" element={<Login/>}/>
                             <Route path="/register" element={<Register/>}/>
-                            <Route path="/profile" element={
-                                <ProtectedRoute>
-                                    <Profile/>
-                                </ProtectedRoute>
-                            }/>
-                            <Route path="/edit-post/:id" element={
-                                <ProtectedRoute>
-                                    <EditPost/>
-                                </ProtectedRoute>
-                            }/>
+                            <Route
+                                path="/profile"
+                                element={
+                                    <ProtectedRoute>
+                                        <Profile/>
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/edit-post/:id"
+                                element={
+                                    <ProtectedRoute>
+                                        <EditPost/>
+                                    </ProtectedRoute>
+                                }
+                            />
                             <Route path="/posts/:id" element={<PostDetail/>}/>
                         </Routes>
                     </main>

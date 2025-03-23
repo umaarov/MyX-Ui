@@ -36,23 +36,25 @@ const Home = () => {
     };
 
     return (
-        <div className="max-w-2xl mx-auto p-4">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             {user && (
-                <PostForm onSubmitSuccess={handlePostCreated}/>
+                <div className="mb-8">
+                    <PostForm onSubmitSuccess={handlePostCreated}/>
+                </div>
             )}
 
-            <h1 className="text-2xl font-bold mb-4">Latest Posts</h1>
+            <h1 className="text-2xl font-bold text-gray-800 mb-6">Latest Posts</h1>
 
             {loading ? (
-                <p className="text-center py-4">Loading posts...</p>
+                <p className="text-center py-6 text-gray-500">Loading posts...</p>
             ) : error ? (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6 text-center">
                     {error}
                 </div>
             ) : posts.length === 0 ? (
-                <p className="text-center py-4">No posts yet.</p>
+                <p className="text-center py-6 text-gray-500">No posts yet.</p>
             ) : (
-                <div className="space-y-4">
+                <div className="space-y-6">
                     {posts.map((post) => (
                         <Post
                             key={post.id}

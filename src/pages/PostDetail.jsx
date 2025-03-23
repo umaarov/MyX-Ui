@@ -32,17 +32,17 @@ const PostDetail = () => {
     };
 
     return (
-        <div className="max-w-2xl mx-auto p-4">
+        <div className="max-w-2xl mx-auto p-6">
             {loading ? (
-                <p className="text-center py-4">Loading post...</p>
+                <p className="text-center py-6 text-gray-500">Loading post...</p>
             ) : error ? (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-center">
                     {error}
                 </div>
             ) : post ? (
                 <Post post={post} onDelete={handlePostDeleted}/>
             ) : (
-                <p className="text-center py-4">Post not found</p>
+                <p className="text-center py-6 text-gray-500">Post not found</p>
             )}
         </div>
     );
