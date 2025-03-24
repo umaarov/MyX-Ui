@@ -1,7 +1,8 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_URL = 'http://localhost:8000/api';
+// const API_URL = 'http://localhost:8000/api';
+const API_URL = '/api';
 
 const api = axios.create({
     baseURL: API_URL,
@@ -98,7 +99,7 @@ export const createPost = async (postData) => {
 export const updatePost = async (id, postData) => {
     const formData = new FormData();
     formData.append('content', postData.content);
-    formData.append('_method', 'PUT');  // For Laravel's form method spoofing
+    formData.append('_method', 'PUT');
 
     if (postData.photo) {
         formData.append('photo', postData.photo);

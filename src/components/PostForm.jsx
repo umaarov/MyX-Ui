@@ -92,7 +92,7 @@ const PostForm = ({postId, onSubmitSuccess}) => {
                               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
                               transition-all duration-200 resize-y"
                     rows="4"
-                    placeholder="What's on your mind?"
+                    placeholder="Write"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     required
